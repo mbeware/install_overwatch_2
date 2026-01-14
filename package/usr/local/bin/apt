@@ -1,0 +1,6 @@
+#!/bin/bash
+source /usr/lib/install_overwatch/logger.sh
+if [[ "$1" =~ ^(install|remove|purge|autoremove)$ ]]; then
+  log_install "APT" "apt $*"
+fi
+exec /usr/bin/apt "$@"

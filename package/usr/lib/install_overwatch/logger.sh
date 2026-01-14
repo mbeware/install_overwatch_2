@@ -13,3 +13,8 @@ log_install() {
 log_curl() {
     echo "$(date --iso-8601=seconds) CURL command: curl $*" >> "$CURL_LOG"
 }
+
+# Exit successfully when run directly (e.g., by systemd)
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    exit 0
+fi

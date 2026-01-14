@@ -72,6 +72,7 @@ systemctl status install_overwatch-init.service
 Verify the wrappers are in place:
 
 ```bash
+which apt    # Should show /usr/local/bin/apt
 which pip    # Should show /usr/local/bin/pip
 which cargo  # Should show /usr/local/bin/cargo
 which curl   # Should show /usr/local/bin/curl
@@ -150,7 +151,7 @@ Once *install_overwatch* is installed, it automatically logs all package install
 
 The following package manager operations are automatically logged to `/var/log/install_overwatch.log`:
 
-- **apt**: All apt install and remove operations via the DPkg::Post-Invoke hook
+- **apt**: apt install, remove, purge, and autoremove operations
 - **pip**: pip install and uninstall commands
 - **cargo**: cargo install and uninstall commands  
 - **flatpak**: flatpak install and uninstall commands
@@ -293,14 +294,13 @@ install_overwatch_2/
 │   ├── DEBIAN/
 │   │   └── control          # Package metadata
 │   ├── etc/
-│   │   ├── apt/apt.conf.d/
-│   │   │   └── 99log-install    # apt hook configuration
 │   │   └── systemd/system/
 │   │       └── install_overwatch-init.service
 │   └── usr/
 │       ├── lib/install_overwatch/
 │       │   └── logger.sh    # Core logging functions
 │       └── local/bin/
+│           ├── apt          # apt wrapper
 │           ├── pip          # pip wrapper
 │           ├── cargo        # cargo wrapper
 │           ├── curl         # curl wrapper
@@ -346,15 +346,20 @@ log_curl() {
 
 Logs are written to `/var/log/install_overwatch.log` for package managers and `/var/log/install_overwatch_curl_downloads.log` for curl. The files are created with 666 permissions so any user can write to them.
 
-### apt Logging
+### APT Logging
 
-apt is handled differently because it doesn't go through a wrapper. Instead, we use apt's built-in hook mechanism. The file `/etc/apt/apt.conf.d/99log-install` contains:
+apt is handled the same way as other package managers - through a wrapper script at `/usr/local/bin/apt`. When you run `apt install something`, the wrapper logs the command and then passes through to `/usr/bin/apt`:
 
-```apthook
-DPkg::Post-Invoke { "echo \"$(date --iso-8601=seconds) apt command: apt $0 $@\" >> /var/log/install_overwatch.log"; };
+```bash
+#!/bin/bash
+source /usr/lib/install_overwatch/logger.sh
+if [[ "$1" =~ ^(install|remove|purge|autoremove)$ ]]; then
+  log_install "APT" "apt $*"
+fi
+exec /usr/bin/apt "$@"
 ```
 
-This hook runs after every dpkg operation and logs the command.
+This approach is more reliable than apt hooks and captures the exact command the user typed.
 
 ### The Snapshot Tool
 

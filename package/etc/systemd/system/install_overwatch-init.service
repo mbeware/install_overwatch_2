@@ -1,0 +1,10 @@
+[Unit]
+Description=install_overwatch Init
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/lib/install_overwatch/logger.sh
+
+[Install]
+WantedBy=multi-user.target

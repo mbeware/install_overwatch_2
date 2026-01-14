@@ -1,0 +1,7 @@
+#!/bin/bash
+source /usr/lib/install_overwatch/logger.sh
+# capture install or uninstall
+if [[ "$1" =~ ^(install|uninstall)$ ]]; then
+  log_install "FLATPAK" "flatpak $*"
+fi
+exec /usr/bin/flatpak "$@"

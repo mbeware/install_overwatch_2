@@ -1,0 +1,6 @@
+#!/bin/bash
+source /usr/lib/install_overwatch/logger.sh
+if [[ "$1" == "install" || "$1" == "uninstall" ]]; then
+  log_install "PIP" "pip $*"
+fi
+exec /usr/bin/pip "$@"

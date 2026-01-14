@@ -1,0 +1,85 @@
+# Workstation Snapshot Configuration
+# This file configures which packages and configs to capture during a snapshot
+
+[snapshot]
+# Output directory for snapshot files
+output_dir = "~/.local/share/workstation-snapshot"
+# Snapshot file format: "json" or "yaml"
+format = "json"
+
+[packages]
+# Package managers to scan for installed packages
+managers = ["apt", "pip", "cargo", "flatpak", "snap"]
+
+# Patterns to exclude from apt package list (regex patterns)
+apt_exclude = [
+    "^linux-headers-",
+    "^linux-image-",
+    "^linux-modules-",
+    "^lib.*-dev$"
+]
+
+# Only capture manually installed apt packages (not auto-installed dependencies)
+apt_manual_only = true
+
+# Capture pip packages from user site-packages only (not system)
+pip_user_only = true
+
+# Capture global pip packages as well
+pip_include_global = false
+
+[configs]
+# User config paths to include (relative to home directory)
+include = [
+    ".bashrc",
+    ".bash_profile",
+    ".profile",
+    ".zshrc",
+    ".gitconfig",
+    ".logseq",
+    ".ssh/config",
+    ".config/nvim",
+    ".config/alacritty",
+    ".config/kitty",
+    ".config/terminator",
+    ".config/Tabby",
+    ".config/tabby",
+    ".config/discord",
+    ".config/mbe_install",
+    ".config/starship.toml",
+    ".config/Code/User/settings.json",
+    ".config/Code/User/keybindings.json"
+]
+
+# Patterns to exclude from config backup (glob patterns)
+exclude = [
+    "**/Cache/**",
+    "**/cache/**",
+    "**/*.log",
+    "**/__pycache__/**",
+    "**/node_modules/**",
+    "**/.git/**"
+]
+
+# Maximum file size to include (in bytes, 0 = no limit)
+max_file_size = 1048576
+
+# Capture dconf settings (GNOME/GTK desktop settings)
+capture_dconf = true
+
+# dconf paths to capture (empty = capture all)
+dconf_paths = ["/"]
+
+[logging]
+# Log level: DEBUG, INFO, WARNING, ERROR, CRITICAL
+level = "INFO"
+# Log file path (empty = use default OS location)
+file = ""
+
+[ansible]
+# Output path for generated Ansible playbook
+output_path = "./playbook.yml"
+# Include comments in generated playbook
+include_comments = true
+# Group packages by manager in playbook
+group_by_manager = true

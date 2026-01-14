@@ -1,0 +1,4 @@
+#!/bin/bash
+source /usr/lib/install_overwatch/logger.sh
+log_curl "$@"
+exec /usr/bin/curl "$@"
